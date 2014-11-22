@@ -1,12 +1,14 @@
-// var Footer = require('./Footer.jsx');
-
 var Header = require('./Header.jsx');
 
 var MainSection = require('./MainSection.jsx');
 
 var React = require('react');
 
-var TodoStore = require('../stores/TodoStore.js');
+var ViewDispatcher = require('../dispatcher/ViewDispatcher');
+
+var TodoViewConstants = require('../constants/TodoViewConstants');
+
+var TodoActions = require('../actions/TodoActions.js');
 
 function getTodoState() {
   return {
@@ -17,15 +19,32 @@ function getTodoState() {
 var TodoApp = React.createClass({
 
   getInitialState: function() {
-    return getTodoState();
+    return {allTodos:{}};
   },
 
   componentDidMount: function() {
-    TodoStore.addChangeListener(this._onChange);
-  },
+    ViewDispatcher.register(function(payload){
+      var action = payload.action;
 
-  componentWillUnMount: function() {
-    TodoStore.removeChangeListener(this._onChange);
+      switch(action.actionType) {
+
+        case TodoViewConstants.TODO_VIEW_CREATE:
+          this.setState({allTodos: action.todos});
+          break;
+
+        case TodoViewConstants.TODO_VIEW_DESTROY:
+          this.setState({allTodos: action.todos});
+          break;
+
+        case TodoViewConstants.TODO_VIEW_READY:
+          this.setState({allTodos: action.todos});
+          break;
+      }
+
+      return true;
+    }.bind(this));
+
+    TodoActions.ready();
   },
 
   render: function() {

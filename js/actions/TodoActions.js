@@ -1,6 +1,6 @@
-var AppDispatcher = require('../dispatcher/AppDispatcher.js');
+var AppDispatcher = require('../dispatcher/AppDispatcher');
 
-var TodoConstants = require('../constants/TodoConstants.js');
+var TodoConstants = require('../constants/TodoConstants');
 
 var TodoActions = {
 
@@ -15,6 +15,12 @@ var TodoActions = {
     AppDispatcher.handleViewAction({
       actionType: TodoConstants.TODO_DESTROY,
       id:id
+    });
+  },
+
+  ready: function(){
+    AppDispatcher.handleViewAction({
+      actionType: TodoConstants.TODO_READY
     });
   }
 
