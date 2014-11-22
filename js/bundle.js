@@ -246,62 +246,64 @@ var merge = require('react/lib/merge');
 
 var Dispatcher = require('./Dispatcher.js');
 
-var AppDispatcher = merge(Dispatcher, {
+var AppDispatcher = function(){
+  Dispatcher.call(this);
+};
 
-  handleViewAction: function(action) {
+AppDispatcher.prototype = Object.create(Dispatcher.prototype);
+
+AppDispatcher.prototype.constructor = AppDispatcher;
+
+AppDispatcher.prototype.handleViewAction = function(action) {
     this.dispatch({
       source: 'VIEW_ACTION',
       action: action
     });
-  }
 
-});
+};
 
-module.exports = AppDispatcher;
+module.exports = new AppDispatcher();
 
 },{"./Dispatcher.js":10,"react/lib/merge":148}],10:[function(require,module,exports){
 var Promise = require('es6-promise').Promise;
 
 var merge = require('react/lib/merge');
 
+var Dispatcher = function(){
+  this._callbacks = [];
+  this._promises = [];
+};
 
-var _callbacks = [];
-var _promises = [];
+Dispatcher.prototype.register = function(callback){
+  this._callbacks.push(callback);
+  return this._callbacks.length - 1;
+};
 
-var Dispatcher = merge({}, {
-
-  register: function(callback){
-    _callbacks.push(callback);
-    return _callbacks.length - 1;
-  },
-
-  dispatch: function(payload) {
-    var resolves = [];
-    var rejects = [];
-    _promises = _callbacks.map(function(_,i){
-      return new Promise (function(resolve,reject){
-        resolves[i] = resolve;
-        rejects[i] = reject;
-      });
+Dispatcher.prototype.dispatch = function(payload) {
+  var resolves = [];
+  var rejects = [];
+  this._promises = this._callbacks.map(function(_,i){
+    return new Promise (function(resolve,reject){
+      resolves[i] = resolve;
+      rejects[i] = reject;
     });
-    _callbacks.forEach(function(callback,i){
-      Promise.resolve(callback(payload)).then(function(){
-        resolves[i](payload);
-      },function(){
-        rejects[i](new Error('Dispatcher callback unsuccessful'));
-      });
+  });
+  this._callbacks.forEach(function(callback,i){
+    Promise.resolve(callback(payload)).then(function(){
+      resolves[i](payload);
+    },function(){
+      rejects[i](new Error('Dispatcher callback unsuccessful'));
     });
-    _promises = [];
-  },
+  });
+  this._promises = [];
+};
 
-  waitFor: function(promiseIndexes, callback){
-    var selectedPromises = promiseIndexes.map(function(index){
-      return _promises[index];
-    });
-    return Promise.all(selectedPromises).then(callback);
-  }
-
-});
+Dispatcher.prototype.waitFor = function(promiseIndexes, callback){
+  var selectedPromises = promiseIndexes.map(function(index){
+    return this._promises[index];
+  }.bind(this));
+  return Promise.all(selectedPromises).then(callback);
+};
 
 module.exports = Dispatcher;
 
