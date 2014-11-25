@@ -538,7 +538,7 @@ ViewDispatcher.prototype.handleStoreAction = function(action) {
 
       //reset action hash, action array, and ready state before dispatching
       this.queuedActions = {};
-      var actions = this.actionsToDispatch.slice();
+      var actions = this.actionsToDispatch;
       this.actionsToDispatch = [];
       this.dispatchReady = false;
 
