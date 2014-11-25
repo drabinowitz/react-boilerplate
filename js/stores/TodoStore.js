@@ -1,6 +1,8 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 
-var TodoViewActions = require('../actions/TodoViewActions.js');
+var TodoViewActions = require('../actions/TodoViewActions');
+
+var AppViewActions = require('../actions/AppViewActions');
 
 var TodoConstants = require('../constants/TodoConstants');
 
@@ -21,10 +23,6 @@ function destroy(id) {
 
 var TodoStore = {};
 
-var getAll = function() {
-  return _todos;
-};
-
 TodoStore.dispatcherIndex = (function(){
   var index = AppDispatcher.register(function(payload){
     var action = payload.action;
@@ -35,23 +33,36 @@ TodoStore.dispatcherIndex = (function(){
         text = action.text.trim();
         if (text !== '') {
           create(text);
-          TodoViewActions.create(getAll());
+          TodoViewActions.create(_todos);
         }
         break;
 
       case TodoConstants.TODO_DESTROY:
         destroy(action.id);
-        TodoViewActions.destroy(getAll());
+        TodoViewActions.destroy(_todos);
         break;
 
       case TodoConstants.TODO_READY:
-        TodoViewActions.ready(getAll());
+        TodoViewActions.ready(_todos);
+        break;
+
+      case TodoConstants.TODO_UPLOAD:
+        setTimeout(function(){
+
+          if (Math.round(Math.random())){
+            AppViewActions.success('Uploaded!');
+          } else {
+            AppViewActions.failure('Upload Failed!');
+          }
+
+        }.bind(this),3000);
+        AppViewActions.loading();
         break;
     }
 
     return true;
   });
-  TodoViewActions.ready(getAll());
+  TodoViewActions.ready(_todos);
   return index;
 }.bind(this))();
 

@@ -3,7 +3,9 @@ var TodoConstants = {
 
   TODO_DESTROY: 'TODO_ITEM_DESTROYED',
 
-  TODO_READY: 'TODO_ITEM_READYED'
+  TODO_READY: 'TODO_ITEM_READYED',
+
+  TODO_UPLOAD: 'TODO_ITEM_UPLOADED'
 };
 
 module.exports = TodoConstants;

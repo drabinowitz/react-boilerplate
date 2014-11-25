@@ -10,11 +10,9 @@ var TodoViewConstants = require('../constants/TodoViewConstants');
 
 var TodoActions = require('../actions/TodoActions.js');
 
-function getTodoState() {
-  return {
-    allTodos: TodoStore.getAll()
-  };
-}
+var uploadMessages = function(){
+  TodoActions.upload();
+};
 
 var TodoApp = React.createClass({
 
@@ -50,15 +48,19 @@ var TodoApp = React.createClass({
   render: function() {
     return (
       <div>
+
+        <button
+          onClick = {uploadMessages}>
+            upload
+        </button>
+
         <Header />
+
         <MainSection
           allTodos = {this.state.allTodos} />
-    </div>
-    );
-  },
 
-  _onChange: function() {
-    this.setState(getTodoState());
+      </div>
+    );
   }
 
 });

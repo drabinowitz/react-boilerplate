@@ -22,7 +22,15 @@ var TodoActions = {
     AppDispatcher.handleViewAction({
       actionType: TodoConstants.TODO_READY
     });
+  },
+
+  upload: function(){
+    AppDispatcher.handleViewAction({
+      actionType: TodoConstants.TODO_UPLOAD
+    });
   }
+
+
 
 };
 
